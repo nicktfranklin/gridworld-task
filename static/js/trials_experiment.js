@@ -25,11 +25,9 @@ var contexts = [
     {'ctx': 0, 'response_handler': response_handler_a, 'goal_id': 'A', 'color': list_colors.pop()},
     {'ctx': 1, 'response_handler': response_handler_a, 'goal_id': 'A', 'color': list_colors.pop()},
     {'ctx': 2, 'response_handler': response_handler_a, 'goal_id': 'B', 'color': list_colors.pop()},
-    {'ctx': 3, 'response_handler': response_handler_a, 'goal_id': 'C', 'color': list_colors.pop()},
-    {'ctx': 4, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()},
-    {'ctx': 5, 'response_handler': response_handler_b, 'goal_id': 'B', 'color': list_colors.pop()},
-    {'ctx': 6, 'response_handler': response_handler_b, 'goal_id': 'D', 'color': list_colors.pop()},
-    {'ctx': 7, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()}
+    {'ctx': 3, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()},
+    {'ctx': 4, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()},
+    {'ctx': 5, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()}
 ];
 
 /* we want to control for the actual goal identity, so randomize what is acutally shown on the screen
@@ -37,7 +35,7 @@ var contexts = [
  */
 
 function shuffle_keys() {
-    var labels = ['A', 'B', 'C', 'D'];
+    var labels = ['A', 'B', 'C'];
     var shuffled_labels = _.shuffle(labels);
     var label_key = {};
     while (labels.length > 0) {
@@ -48,11 +46,10 @@ function shuffle_keys() {
 var goal_display_label_key = shuffle_keys();
 
 // var n_ctx = contexts.length;
-var balance = [6, 6, 6, 18, 6, 12, 16];
+var balance = [4, 4, 16, 8, 16];
 var trial_tile_size = 70;
 
 /* New! Randomization Algorithm */
-
 function randomize_context_queue(context_balance, repeat_prob) {
     // generate a bag of contexts to sample without replacement
     var bag_of_contexts = [];
@@ -93,47 +90,11 @@ function randomize_context_queue(context_balance, repeat_prob) {
 
     return context_queue
 }
-var context_queue = randomize_context_queue(balance, 0.25);
-// /* create the randomized Queue of contexts */
-// var bag_of_contexts = [];
-// for (var ii=0; ii<n_ctx; ii++) {
-//     var n_reps = balance[ii];
-//     for (var jj=0; jj<n_reps; jj++) {
-//         bag_of_contexts.push(ii);
-//     }
-// }
-//
+var context_queue = randomize_context_queue(balance, 0.20);
 
-//
-//
-// shuffle(bag_of_contexts);
-//
-// // this function is needed for the findIndex command
-// var context_check_val = -1;
-// function check_ctx(element) {
-//     return element == context_check_val;
-// }
-//
-// /* add some auto-correlation */
-// var context_queue = [];
-// while (bag_of_contexts.length > 0) {
-//     var ctx = bag_of_contexts.pop();
-//     context_queue.push(ctx);
-//
-//     // check if the context is in the bag anymore
-//     context_check_val = ctx;
-//     var idx = bag_of_contexts.findIndex(check_ctx);
-//     if (idx > -1) {
-//         // with certain probability, add the same context to the queue again
-//         if (Math.random() < 0.75) {
-//             context_queue.push(ctx); // push the ctx onto the queue
-//             bag_of_contexts.splice(idx, 1); // remove the context from the bag so as not to re-sample it
-//         }
-//     }
-// }
 // Note! context order is a queue!!
 for (ii=0; ii<4; ii++) {
-    context_queue.push(7);
+    context_queue.push(5);
 }
 console.log('Context Order:');
 console.log(context_queue);
@@ -152,13 +113,55 @@ console.log(context_counts);
 
 /* need code to define the goal locations */
 function random_goal_locations() {
-    var quadrant_1_goal = [Math.floor(Math.random() * 3) + 3, Math.floor(Math.random() * 3) + 3];
-    var quadrant_2_goal = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3) + 3];
-    var quadrant_3_goal = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
-    var quadrant_4_goal = [Math.floor(Math.random() * 3) + 3, Math.floor(Math.random() * 3)];
+    // create a key between location id number and x, y coordinate space
+    var location_key = {};
+    var t = 0;
+    for (var x=0; x<6; x++) {
+        for (var y=0; y<6; y++) {
+            location_key[t] = [x, y];
+            t++;
+        }
+    }
 
 
-    var goal_locations = [quadrant_1_goal, quadrant_2_goal, quadrant_3_goal, quadrant_4_goal];
+    // define the "third" sections
+    var third_1_goal_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14];
+    var third_2_goal_ids = [12, 18, 19, 20, 24, 25, 26, 27, 30, 31, 32, 33];
+    var third_3_goal_ids = [10, 11, 15, 16, 17, 21, 22, 23, 28, 29, 34, 35];
+
+    //randomize the keys
+    third_1_goal_ids = _.shuffle(third_1_goal_ids);
+    third_2_goal_ids = _.shuffle(third_2_goal_ids);
+    third_3_goal_ids = _.shuffle(third_3_goal_ids);
+
+    // draw one location from each third
+    var loc_ids = [third_1_goal_ids.pop(), third_2_goal_ids.pop(), third_3_goal_ids.pop()];
+
+    // translate the location id numbers to (x, y)
+    var coin_flip_1 = Math.random() < 0.5;
+    var coin_flip_2 = Math.random() < 0.5;
+    var coin_flip_3 = Math.random() < 0.5;
+
+    var goal_locations = [];
+    while (loc_ids.length > 0) {
+        var id = loc_ids.pop();
+        var loc = location_key[id];
+        x = loc[0];
+        y = loc[1];
+        if (coin_flip_1) {
+            x = 5-x;
+        }
+        if (coin_flip_2) {
+            y = 5-y;
+        }
+        if (coin_flip_3) {
+            goal_locations.push([y, x])
+        } else {
+            goal_locations.push([x, y])
+        }
+    }
+
+
     goal_locations = _.shuffle(goal_locations);
     return goal_locations
 }
@@ -384,7 +387,6 @@ Trial.prototype.end = function () {
 * Draw the experiment trials*/
 
 var trials = [];
-//console.log(grid_contexts);
 
 while (context_queue.length > 0) {
     // take the context number from the queue
@@ -404,7 +406,7 @@ while (context_queue.length > 0) {
     // define the goal locations and the agent start location
     var initial_locations = random_initial_locations();
     var start_location =  initial_locations.Agent;
-    var goal_ids = ['A', 'B', 'C', 'D'];
+    var goal_ids = ['A', 'B', 'C'];
     var goal_locations = {};
     for (ii=0; ii<goal_ids.length; ii++) {
         goal_locations[goal_ids[ii]] = initial_locations.Goals.pop();
