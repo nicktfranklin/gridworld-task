@@ -524,5 +524,6 @@ $(window).load( function(){
     psiTurk.doInstructions(
         instructionsTutorial,
         function() { current_view = new Tutorial(); } // what you want to do when you are done with instructions
+        // function() {current_view = new Generalization()}
     );
 });

@@ -22,6 +22,7 @@ var GridWorldPainter = function (context) {
 
 
 GridWorldPainter.prototype.init = function (container) {
+	console.log(this);
 	this.width = this.TILE_SIZE*this.gridworld.width;
 	this.height = this.TILE_SIZE*this.gridworld.height;
 	this.paper = Raphael(container, this.width, this.height);
@@ -119,6 +120,7 @@ GridWorldPainter.prototype.init = function (container) {
 };
 
 GridWorldPainter.prototype.drawState = function (state) {
+	console.log(this);
 	//paper.getPaper(this.canvas);
 	for (var object in state) {
 		if (!state.hasOwnProperty(object)) {

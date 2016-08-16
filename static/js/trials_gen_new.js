@@ -77,17 +77,16 @@ while (context_queue.length > 0) {
     // define the goal locations and the agent start location
     var initial_locations = random_initial_locations();
     var start_location =  initial_locations.Agent;
-    var goal_ids = ['A', 'B', 'C', 'D'];
+    var goal_ids = ['A', 'B', 'C'];
     var goal_locations = {};
     for (ii=0; ii<goal_ids.length; ii++) {
         goal_locations[goal_ids[ii]] = initial_locations.Goals.pop();
     }
 
     var goal_values = {
-        'A': 3.75, // "A" is rewarded in 3 of 8 training contexts
-        'B': 3.75, // "B" is rewarded in 3 of 8 training contexts
-        'C': 1.25, // "C" is rewarded in 1 of 8 training contexts
-        'D': 1.25  // "D" is rewarded in 1 of 8 training contexts
+        'A': 6.67, // "A" is rewarded in 4 of 6 training contexts
+        'B': 1.67, // "B" is rewarded in 1 of 6 training contexts
+        'C': 1.67  // "C" is rewarded in 1 of 6 training contexts
     };
 
     // construct the goals
