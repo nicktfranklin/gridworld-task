@@ -46,7 +46,7 @@ function shuffle_keys() {
 var goal_display_label_key = shuffle_keys();
 
 // var n_ctx = contexts.length;
-var balance = [4, 4, 16, 8, 16];
+var balance = [6, 6, 24, 12, 24];
 var trial_tile_size = 70;
 
 /* New! Randomization Algorithm */

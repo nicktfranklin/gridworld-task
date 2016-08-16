@@ -246,8 +246,8 @@ var Experiment = function() {
             });
 
         psiTurk.saveData();
-        //current_view = new RewardFeedback_experiment();
-        current_view = new DemographicsQuestionnaire();
+        current_view = new RewardFeedback_experiment();
+        // current_view = new DemographicsQuestionnaire();
     };
 
     init();
@@ -523,11 +523,6 @@ var start_time = new Date().getTime();
 $(window).load( function(){
     psiTurk.doInstructions(
         instructionsTutorial,
-        // instructionsGeneralization,
-        // function () { current_view = new Generalization(); } // executes following instructions.
         function() { current_view = new Tutorial(); } // what you want to do when you are done with instructions
-        // function() { current_view = new Experiment(); }
-        // function() {current_view = new DemographicsQuestionnaire() }
-        //instructionsExperiment // a list of pages you want to display in sequence
     );
 });

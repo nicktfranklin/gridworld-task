@@ -89,7 +89,7 @@ demo_responseHandlerGenerator = function (action_mapping) {
                 'End Location': this.state['agent1'].location,
                 'rt': rt,
                 'action_map': action_mapping,
-                'In goal': this.mdp.inGoal(nextState[agent]['location'], agent)
+                'In Goal': this.mdp.inGoal(nextState[agent]['location'], agent)
             });
 
         var reset_key_handler;
@@ -180,7 +180,7 @@ var demo_responseHandler_generator_noReachableAction = function(action_mapping) 
                 'End Location': this.state['agent1'].location,
                 'rt': rt,
                 'action_map': action_mapping,
-                'In goal': this.mdp.inGoal(nextState[agent]['location'], agent)
+                'In Goal': this.mdp.inGoal(nextState[agent]['location'], agent)
             }
         );
 
@@ -307,7 +307,7 @@ responseHandlerGenerator = function (action_mapping) {
                 'Walls': this.gridworld.walls,
                 'Action': response, // this is the cardinal direction taken
                 'Reward': goal_value,
-                'In goal': this.mdp.inGoal(nextState[agent]['location'], agent),
+                'In Goal': this.mdp.inGoal(nextState[agent]['location'], agent),
                 'Chosen Goal': goal_id,
                 'Displayed Goal Label': goal_display_label,
                 'Steps Taken': this.actions_taken,
@@ -454,7 +454,7 @@ responseHandlerGeneratorForTest = function (action_mapping, instruction_set) {
                 'Walls': this.gridworld.walls,
                 'Action': response, // this is the cardinal direction taken
                 'Reward': goal_value,
-                'In goal': this.mdp.inGoal(nextState[agent]['location'], agent),
+                'In Goal': this.mdp.inGoal(nextState[agent]['location'], agent),
                 'Chosen Goal': goal_id,
                 'Displayed Goal Label': goal_display_label,
                 'Steps Taken': this.actions_taken,
