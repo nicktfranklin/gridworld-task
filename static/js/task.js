@@ -62,16 +62,13 @@ var instructionsGeneralization = [
 /********************
 * Tutorial      *
 ********************/
-var allow_continue;
-var trial_complete;
-var allow_response;
+var move_to_next_trial;
 var n_responses;
-
 
 var Tutorial = function() {
 
-    allow_continue = false;
-    trial_complete = false;
+    move_to_next_trial = false;
+    // trial_complete = false;
 
     var curBlock;
 
@@ -94,42 +91,49 @@ var Tutorial = function() {
 
 
     var next = function(event) {
+        console.log('Level 1 event');
 
-        if (event.which==13) {
+        if (move_to_next_trial && event.which==13) {
             if (demo_trials.length===0) {
 
                 $(document).unbind('keydown.continue');
                 $(document).unbind('keydown.gridworld');
                 psiTurk.doInstructions(
                     instructionsExperiment,
-                    function() { allow_response = true; current_view = new Experiment(); } // function executes following instructions.
+                    function() {current_view = new Experiment(); } // function executes following instructions.
                 );
             }
             else {
-                if (allow_continue) {
-                    //this.stateCheck = true;
-                    $(document).unbind('keydown.continue');
-                    $.publish('killtimers');
+                //this.stateCheck = true;
+                $(document).unbind('keydown.continue');
+                $.publish('killtimers');
 
-                    n_responses = 0;
+                n_responses = 0;
+                // console.log(cur)
 
-                    if (typeof curBlock !== 'undefined') {
-                        setTimeout(curBlock.end(), 10);
-                    }
+                if (typeof curBlock !== 'undefined') {
+                    var restart = curBlock.restart;
+                    console.log(restart);
+                    setTimeout(curBlock.end(), 10);
+                }
+
+                if (restart !== true) {
                     curBlock = demo_trials.shift();
                     curBlock.task_display = document.getElementById('task_display');
                     curBlock.text_display = $('#trial_text');
-
                     setTimeout(curBlock.start(), 10);
 
-                    allow_response = true;
-                    allow_continue = false;
-
-                    setTimeout(function() {
-                        console.log('end demo trial');
-                        $(document).bind('keydown.continue', next);
-                    }, 10)
+                } else {
+                    curBlock.reset()
                 }
+
+
+                move_to_next_trial = false;
+
+                setTimeout(function() {
+                    console.log('end demo trial');
+                    $(document).bind('keydown.continue', next);
+                }, 10)
             }
         }
     };
@@ -148,8 +152,8 @@ var times_seen_context = {};
 var Experiment = function() {
 
     trial_number = -1;
-    allow_continue = false;
-    trial_complete = false;
+    move_to_next_trial = false;
+    // trial_complete = false;
 
     //trials variable is declared in trials_experimental.js
 
@@ -175,8 +179,7 @@ var Experiment = function() {
         times_seen_context[curBlock.context] = 1;
         curBlock.times_seen_context = 1;
 
-        allow_response = true;
-        allow_continue = false;
+        move_to_next_trial = false;
 
         setTimeout(function() {
             $(document).bind('keydown.continue', next);
@@ -188,12 +191,14 @@ var Experiment = function() {
         console.log("next event called (training)");
 
         if (event.which==13) {
+            console.log(event);
+
             if (trials.length===0) {
                 finish()
             }
             else {
-                if (allow_continue) {
-                    //this.stateCheck = true;
+                if (move_to_next_trial) {
+
                     $(document).unbind('keydown.continue');
                     $.publish('killtimers');
 
@@ -204,6 +209,7 @@ var Experiment = function() {
                     }
                     total_points = curBlock.total_points; // get the total points from the end of the trial
 
+                    console.log("Trial shift");
                     curBlock = trials.shift();
 
                     // Pass the total points collected to the current block for display
@@ -224,8 +230,8 @@ var Experiment = function() {
                     console.log('Trials left: ' + trials.length);
 
 
-                    allow_response = true;
-                    allow_continue = false;
+                    // allow_response = true;
+                    move_to_next_trial = false;
                     console.log('check continue');
 
                     setTimeout(function() {
@@ -258,8 +264,8 @@ var generalization_points = 0;
 var Generalization = function() {
 
    trial_number = -1;
-   allow_continue = false;
-   trial_complete = false;
+   // move_to_next_trial = false;
+   // trial_complete = false;
 
    //trials variable is declared in trials_experimental.js
 
@@ -285,8 +291,8 @@ var Generalization = function() {
        curBlock.total_points = 0;
        times_seen_context[curBlock.context] = 1;
 
-       allow_response = true;
-       allow_continue = false;
+       // allow_response = true;
+       move_to_next_trial = false;
 
        setTimeout(function() {
            $(document).bind('keydown.continue', next_test_trial);
@@ -302,7 +308,7 @@ var Generalization = function() {
                finish()
            }
            else {
-               if (allow_continue) {
+               if (move_to_next_trial) {
                    //this.stateCheck = true;
                    $(document).unbind('keydown.continue');
                    $.publish('killtimers');
@@ -330,8 +336,8 @@ var Generalization = function() {
 
                    setTimeout(curBlock.start(), 10);
 
-                   allow_response = true;
-                   allow_continue = false;
+                   // allow_response = true;
+                   move_to_next_trial = false;
                    console.log('check continue');
 
                    setTimeout(function() {
@@ -369,7 +375,7 @@ var RewardFeedback_experiment = function() {
         psiTurk.doInstructions(
             instructionsGeneralization,
             function() {
-                allow_response = true;
+                // allow_response = true;
                 current_view = new Generalization(); // executes following instructions.
             }
         );

@@ -23,7 +23,7 @@ demo_responseHandlerGenerator = function (action_mapping) {
 
         var rt = new Date().getTime() - trial_on; // record the reaction time.
 
-        //////choose random actions for other agents
+        //////
         var agentActions = {};
 
         agentActions['agent1'] = response;
@@ -33,6 +33,7 @@ demo_responseHandlerGenerator = function (action_mapping) {
         this.state = nextState;
 
         $(document).unbind('keydown.gridworld');
+        this.restart = false;
 
         /* Determine the Rewards */
         //var reset_key_time = this.painter.ACTION_ANIMATION_TIME;
@@ -40,20 +41,33 @@ demo_responseHandlerGenerator = function (action_mapping) {
             if (this.state.hasOwnProperty(agent)) {
                 if (this.mdp.inGoal(nextState[agent]['location'], agent)) {
 
-                    allow_response = false;
-                    allow_continue = true;
-                    trial_complete = true;
+                    var goal_value = this.mdp.getStateValue(nextState[agent]['location'], agent);
+                    var display;
+                    move_to_next_trial = true;
+
+
+                    var reward_label;
+                    if (goal_value > 0) {
+                        reward_label = 'Great!';
+                        display = 'You got to the right goal!<br><br> ' +
+                            '<I><span style="color #707070">Press enter to continue</span></I>';
+
+                    } else {
+                        this.restart = true;
+                        reward_label = 'Try Again!';
+                        display = "Oops! That's not the right goal!<br><br> " +
+                            '<I><span style="color #707070">Press enter to try again</span></I>';
+                    }
 
                     // if agent is in goal state, celebrate.
                     var celebrateGoal = (function (painter, location, agent) {
                         return function () {
-                            painter.showReward(location, agent, 'Great!');
+                            painter.showReward(location, agent, reward_label);
                             if (typeof painter.points === 'undefined') {
                                 painter.points = {'agent1': 0}
                             }
                             painter.points[agent]++;
-                            $('#trial_text').html('You got to the goal!<br><br> ' +
-                                '<I><span style="color #707070">Press enter to continue</span></I>');
+                            $('#trial_text').html(display);
                         }
                     })(this.painter, nextState[agent]['location'], agent);
 
@@ -66,21 +80,12 @@ demo_responseHandlerGenerator = function (action_mapping) {
                         })(th)
                     );
 
-
-                    th = setTimeout(function () {
-                    }, this.painter.ACTION_ANIMATION_TIME + 1000);
-                    $.subscribe('killtimers', (function (th) {
-                            return function () {
-                                clearTimeout(th)
-                            }
-                        })(th)
-                    );
-                    //reset_key_time = this.painter.ACTION_ANIMATION_TIME + 1000;
+                    console.log("check end");
                 }
             }
         }
 
-        // Record in psiturk (work in progress)
+        // Record in psiturk
         psiTurk.recordTrialData(
             {
                 'Phase': 'Demo Trial',
@@ -126,7 +131,7 @@ demo_responseHandlerGenerator = function (action_mapping) {
 
 var demo_responseHandler_generator_noReachableAction = function(action_mapping) {
 
-    allow_response = true;
+    // allow_response = true;
     var n_responses = 0;
 
     return function (event) {
@@ -141,7 +146,7 @@ var demo_responseHandler_generator_noReachableAction = function(action_mapping) 
         // allow the subject to exit the trial after seven responses
         if (n_responses >= 7) {
             $('#trial_text').html('Great!<br> <br> <I><span style="color: #707070">Press enter to continue</span></br>');
-            allow_continue = true;
+            move_to_next_trial = true;
         }
 
 
@@ -210,6 +215,90 @@ var demo_responseHandler_generator_noReachableAction = function(action_mapping) 
 };
 
 
+var demo_responseHandler_generator_endDemo= function(action_mapping) {
+
+    var n_responses = 0;
+
+    return function (event) {
+
+        n_responses++;
+
+        // allow the subject to exit the trial after seven responses (if subject hits enter, skip rest of code)
+        if (event.which == 13) {
+            return;
+        }
+
+        // allow the subject to exit the trial after seven responses
+        if (n_responses >= 7) {
+            $('#trial_text').html("That's how it works!!!<br>.~*`*~.~*`*~.~*`*~.~*`*~.<br> <I><span style='color: #707070'>Press enter to continue</span></br>");
+            move_to_next_trial = true;
+        }
+
+
+        // Use the Action map to translate the action correctly.
+        var response;
+        response = action_mapping[event.which];
+        if (response === undefined) {
+            response = 'wait';
+        }
+
+        var rt = new Date().getTime() - trial_on; // record the reaction time.
+
+        ////choose random actions for other agents
+        var agentActions = {};
+        var availableActions = ['left', 'up', 'right', 'down', 'wait'];
+        for (var agent in this.state) {
+            if (this.state[agent].type == 'agent' && agent !== 'agent1') {
+                agentActions[agent] = availableActions[Math.floor(Math.random() * availableActions.length)]
+            }
+        }
+        agentActions['agent1'] = response;
+
+        var nextState = this.mdp.getTransition(this.state, agentActions);
+        this.painter.drawTransition(this.state, agentActions, nextState, this.mdp);
+        this.state = nextState;
+
+        $(document).unbind('keydown.gridworld');
+
+        // Record in psiturk (work in progress)
+        psiTurk.recordTrialData(
+            {
+                'Phase': 'Demo Trial',
+                'key-press': event.which,
+                'action': response,
+                'End Location': this.state['agent1'].location,
+                'rt': rt,
+                'action_map': action_mapping,
+                'In Goal': this.mdp.inGoal(nextState[agent]['location'], agent)
+            }
+        );
+
+        //note: you need a closure in order to properly reset
+        var reset_key_handler = (function (key_handler) {
+            return function () {
+                $(document).bind('keydown.gridworld', key_handler);
+            }
+        })(this.key_handler);
+
+
+
+        var th = setTimeout(reset_key_handler, this.painter.ACTION_ANIMATION_TIME + wait_before_actions_time);
+        $.subscribe('killtimers', (function (th) {
+                return function () {
+                    clearTimeout(th)
+                }
+            })(th)
+        );
+
+
+        trial_on = new Date().getTime();
+
+
+    };
+
+};
+
+
 var responseHandlerGenerator;
 responseHandlerGenerator = function (action_mapping) {
     /**
@@ -250,9 +339,9 @@ responseHandlerGenerator = function (action_mapping) {
 
             if (this.mdp.inGoal(nextState[agent]['location'], agent)) {
 
-                allow_response = false;
-                allow_continue = true;
-                trial_complete = true;
+                // allow_response = false;
+                move_to_next_trial = true;
+                // trial_complete = true;
 
                 //get the value, identity and on-screen label of the goal
                 goal_value = this.mdp.getStateValue(nextState[agent]['location'], agent);
@@ -397,9 +486,9 @@ responseHandlerGeneratorForTest = function (action_mapping, instruction_set) {
 
             if (this.mdp.inGoal(nextState[agent]['location'], agent)) {
 
-                allow_response = false;
-                allow_continue = true;
-                trial_complete = true;
+                // allow_response = false;
+                move_to_next_trial = true;
+                // trial_complete = true;
 
                 //get the value, identity and on-screen label of the goal
                 goal_value = this.mdp.getStateValue(nextState[agent]['location'], agent);

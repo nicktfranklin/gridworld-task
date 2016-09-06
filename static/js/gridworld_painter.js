@@ -119,7 +119,7 @@ GridWorldPainter.prototype.init = function (container) {
 };
 
 GridWorldPainter.prototype.drawState = function (state) {
-	console.log(this);
+	// console.log(this);
 	//paper.getPaper(this.canvas);
 	for (var object in state) {
 		if (!state.hasOwnProperty(object)) {
