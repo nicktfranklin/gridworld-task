@@ -36,6 +36,7 @@ var instructionsTutorial = [
 ];
 
 var instructionsExperiment = [
+    "instructions/instruct-endtutorial.html",
     "instructions/instruct-experiment1.html",
     "instructions/instruct-experiment2.html",
     "instructions/instruct-experiment3.html"

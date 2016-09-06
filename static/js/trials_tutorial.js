@@ -279,7 +279,7 @@ var generate_demo8 = function(response_handler) {
 		response_handler
 		,
 		//initial text, display id, message id
-		'During the game, there will be multiple goals in a maze<br> Go to goal labeled "Y" <br>' +
+		'You will see multiple goals in a maze, each labeled with a letter.<br> Here, the "<b>Y</b>" square is the goal. <br>' +
 			'<span style="color: #707070">Use the ' + instruction_set_b + ' keys to move.</span>',
 		'#task_display',
 		'#trial_text'
@@ -302,8 +302,8 @@ var generate_demo9 = function(response_handler) {
 			tile_size: demo_tile_size,
 			goals: [
 				{agent:'agent1', location: [1,1], label: 'Goal', display_label: 'X', value: 1},
-				{agent:'agent1', location: [1,3], label: 'Goal', display_label: 'z', value: 0},
-				{agent:'agent1', location: [3,0], label: 'Goal', display_label: 'y', value: 0}
+				{agent:'agent1', location: [1,3], label: 'Goal', display_label: 'Z', value: 0},
+				{agent:'agent1', location: [3,0], label: 'Goal', display_label: 'Y', value: 0}
 			],
 			agents: [{name: 'agent1'}]
 		},
@@ -314,7 +314,7 @@ var generate_demo9 = function(response_handler) {
 		response_handler
 		,
 		//initial text, display id, message id
-		'This time, <b>X</b> marks the spot!<br> <br>' +
+		'Each color has a different goal. <br>This time, <b>X</b> marks the spot!<br>' +
 		'<span style="color: #707070">Use the ' + instruction_set_a + ' keys to move.</span>',
 		'#task_display',
 		'#trial_text'
@@ -350,5 +350,5 @@ var endDemo = new DemoTrial(
 );
 
 
-var demo_trials = [demo0, demo1, demo2, demo3, demo5, demo6, demo7, demo8, demo9, endDemo];
-// var demo_trials = [demo8, demo9, endDemo];
+// var demo_trials = [demo0, demo1, demo2, demo3, demo5, demo6, demo7, demo8, demo9, endDemo];
+var demo_trials = [demo8, endDemo];

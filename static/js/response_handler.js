@@ -222,6 +222,7 @@ var demo_responseHandler_generator_endDemo= function(action_mapping) {
     return function (event) {
 
         n_responses++;
+        move_to_next_trial = true;
 
         // allow the subject to exit the trial after seven responses (if subject hits enter, skip rest of code)
         if (event.which == 13) {
@@ -229,9 +230,8 @@ var demo_responseHandler_generator_endDemo= function(action_mapping) {
         }
 
         // allow the subject to exit the trial after seven responses
-        if (n_responses >= 7) {
+        if (n_responses >= 4) {
             $('#trial_text').html("That's how it works!!!<br>.~*`*~.~*`*~.~*`*~.~*`*~.<br> <I><span style='color: #707070'>Press enter to continue</span></br>");
-            move_to_next_trial = true;
         }
 
 
