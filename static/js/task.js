@@ -21,6 +21,7 @@ var pages = [
     "stage.html",
     "questionnaires/questionnaire-task.html",
     "questionnaires/questionnaire-demographics.html",
+    "questionnaires/questionnaire-instructions.html",
     "feedback/feedback-experiment.html",
     "instructions/instruct-generalization1.html",
     "instructions/instruct-generalization2.html",
@@ -37,6 +38,12 @@ var instructionsTutorial = [
 
 var instructionsExperiment = [
     "instructions/instruct-endtutorial.html",
+    "instructions/instruct-experiment1.html",
+    "instructions/instruct-experiment2.html",
+    "instructions/instruct-experiment3.html"
+];
+
+var instructionsExperiment_repeat = [
     "instructions/instruct-experiment1.html",
     "instructions/instruct-experiment2.html",
     "instructions/instruct-experiment3.html"
@@ -92,8 +99,6 @@ var Tutorial = function() {
 
 
     var next = function(event) {
-        console.log('Level 1 event');
-
         if (move_to_next_trial && event.which==13) {
             if (demo_trials.length===0) {
 
@@ -101,7 +106,7 @@ var Tutorial = function() {
                 $(document).unbind('keydown.gridworld');
                 psiTurk.doInstructions(
                     instructionsExperiment,
-                    function() {current_view = new Experiment(); } // function executes following instructions.
+                    function() {current_view = new InstructionsQuestionnaire(); } // function executes following instructions.
                 );
             }
             else {
@@ -409,6 +414,74 @@ var reprompt;
 var record_responses;
 var prompt_resubmit;
 var resubmit;
+var InstructionsQuestionnaire = function() {
+
+    var check_responses = function() {
+
+        var answers = {};
+        $('select').each( function(i, val) {
+            answers[this.id] = this.value;
+        });
+
+        var correct_answers = {
+            'q1': 'Both',
+            'q2': "Letter",
+            'q3': "Points"
+        };
+
+        var all_correct;
+        for (var q in answers) {
+            if (!answers.hasOwnProperty(q)) continue;
+            all_correct = answers[q] === correct_answers[q];
+
+            if (!all_correct) {
+                break
+            }
+        }
+
+        if (all_correct) {
+            $('#backbutton').html('');
+            $('#next').html('Begin Game <span class="glyphicon glyphicon-arrow-right"></span>');
+            return true;
+        }
+        return false;
+    };
+
+    // Load the questionnaire snippet
+    psiTurk.showPage('questionnaires/questionnaire-instructions.html');
+
+    var start_experiment = function() {
+        $("#next").click(function() {
+            current_view = Experiment();
+        })
+
+    };
+
+    $("#next").click(function () {
+        var check_val = check_responses();
+        if (check_val) {
+            start_experiment();
+            $("#my_head").html('<span style="font-weight: bold"><span style="color: blue">Great Job!</span></span> ' +
+                '<br>Start the experiment when you are ready!');
+        } else {
+            $("#my_head").html('<span style="font-weight: bold"><span style="color: red">Try again!</span></span> ' +
+            "Select the right answers before you continue<br>You can go back and read the " +
+                "instructions again if you don't remember.");
+        }
+    });
+
+
+    $("#back").click(function () {
+        psiTurk.doInstructions(
+            instructionsExperiment_repeat,
+            function () { current_view = new InstructionsQuestionnaire();
+
+            }
+        );
+    });
+
+
+};
 
 var DemographicsQuestionnaire = function() {
 
@@ -436,6 +509,15 @@ var DemographicsQuestionnaire = function() {
         $("#resubmit").click(resubmit);
     };
 
+    var check_responses = function() {
+        $('textarea').each( function(i, val) {
+            console.log(this.id, this.value)
+        });
+        $('select').each( function(i, val) {
+            console.log(this.id, this.value)
+        });
+    };
+
     resubmit = function() {
         replaceBody("<h1>Trying to resubmit...</h1>");
         reprompt = setTimeout(prompt_resubmit, 10000);
@@ -454,6 +536,7 @@ var DemographicsQuestionnaire = function() {
     psiTurk.recordTrialData({'phase':'questionnaire-demographics', 'status':'begin'});
     
     $("#next").click(function () {
+        check_responses();
         record_responses();
         psiTurk.saveData({
             success: function(){
@@ -508,6 +591,7 @@ var TaskQuestionnaire = function() {
     psiTurk.showPage('questionnaires/questionnaire-task.html');
     psiTurk.recordTrialData({'phase':'questionnaire-task', 'status':'begin'});
 
+
     $("#next").click(function () {
         record_responses();
         psiTurk.saveData({
@@ -531,6 +615,9 @@ $(window).load( function(){
     psiTurk.doInstructions(
         instructionsTutorial,
         function() { current_view = new Tutorial(); } // what you want to do when you are done with instructions
+        // instructionsGeneralization,
         // function() {current_view = new Generalization()}
+        // function () { current_view = new InstructionsQuestionnaire() };
+        // function() { current_view = new Tutorial(); }
     );
 });

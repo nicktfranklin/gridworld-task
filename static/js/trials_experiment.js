@@ -26,7 +26,7 @@ var contexts = [
     {'ctx': 1, 'response_handler': response_handler_a, 'goal_id': 'A', 'color': list_colors.pop()},
     {'ctx': 2, 'response_handler': response_handler_a, 'goal_id': 'B', 'color': list_colors.pop()},
     {'ctx': 3, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()},
-    {'ctx': 4, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()},
+    {'ctx': 4, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()}
     // {'ctx': 5, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()}
 ];
 
@@ -90,7 +90,7 @@ function randomize_context_queue(context_balance, repeat_prob) {
 
     return context_queue
 }
-var context_queue = randomize_context_queue(balance, 0.20);
+var context_queue = randomize_context_queue(balance, 0.15);
 
 // Note! context order is a queue!!
 // for (ii=0; ii<4; ii++) {

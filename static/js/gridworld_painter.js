@@ -279,6 +279,23 @@ GridWorldPainter.prototype.showReward = function (loc, agent, text) {
 	$.subscribe('killtimers', this.makeTimerKiller(r, r_animate))
 };
 
+GridWorldPainter.prototype.showLoss = function (loc, agent, text) {
+	var params = {type : 'text',
+		x : (loc[0] + .5)*this.TILE_SIZE,
+		y : (this.gridworld.height - loc[1] - .5)*this.TILE_SIZE,
+		text : text,
+		"font-size" : 24,
+		// "font-weight": "bold",
+		stroke: 'black',
+		fill : 'black'};
+	var r = this.paper.add([params])[0];
+	var r_animate = Raphael.animation({y : r.attr("y") - .5*this.TILE_SIZE, opacity : 0}, this.REWARD_DISPLAY_TIME);
+
+	r.animate(r_animate);
+	$.subscribe('killtimers', this.makeTimerKiller(r, r_animate))
+};
+
+
 //GridWorldPainter.prototype.drawGoalLabel = function (loc, agent, text) {
 //	var params = {type : 'text',
 //							 x : (loc[0] + .5)*this.TILE_SIZE,

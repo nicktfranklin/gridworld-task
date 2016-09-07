@@ -46,15 +46,15 @@ demo_responseHandlerGenerator = function (action_mapping) {
                     move_to_next_trial = true;
 
 
-                    var reward_label;
+                    // var reward_label;
                     if (goal_value > 0) {
-                        reward_label = 'Great!';
+                        // reward_label = 'Great!';
                         display = 'You got to the right goal!<br><br> ' +
                             '<I><span style="color #707070">Press enter to continue</span></I>';
 
                     } else {
                         this.restart = true;
-                        reward_label = 'Try Again!';
+                        // reward_label = 'Try Again!';
                         display = "Oops! That's not the right goal!<br><br> " +
                             '<I><span style="color #707070">Press enter to try again</span></I>';
                     }
@@ -62,7 +62,12 @@ demo_responseHandlerGenerator = function (action_mapping) {
                     // if agent is in goal state, celebrate.
                     var celebrateGoal = (function (painter, location, agent) {
                         return function () {
-                            painter.showReward(location, agent, reward_label);
+                            if (goal_value) {
+                                painter.showReward(location, agent, 'Great!');
+                            } else {
+                                painter.showLoss(location, agent, 'Try Again!')
+                            };
+
                             if (typeof painter.points === 'undefined') {
                                 painter.points = {'agent1': 0}
                             }
@@ -348,11 +353,18 @@ responseHandlerGenerator = function (action_mapping) {
                 goal_display_label = this.mdp.getGoalDisplayLabel(nextState[agent]['location'], agent);
                 goal_id = this.mdp.getGoalID(nextState[agent]['location'], agent);
                 this.total_points += goal_value;
+                console.log("Goal: " + goal_id + ", Label: " + goal_display_label);
 
                 // if agent is in goal state, celebrate.
                 var celebrateGoal = (function (painter, location, agent, points, goal_display_label) {
                     return function () {
-                        painter.showReward(location, agent, '+'.concat(String(points)));
+                        if (goal_value > 0) {
+                            painter.showReward(location, agent, '+'.concat(String(points)));
+                        } else {
+                            painter.showLoss(location, agent, ''.concat(String(points)));
+
+                        }
+
 
                         var text_display = 'Goal: <span style="font-weight: bold"><span style="font-size:150%">' +
                             '<span style="color:' + painter.AGENT_COLORS['agent1'] +'">' +
@@ -367,7 +379,11 @@ responseHandlerGenerator = function (action_mapping) {
                 })(this.painter, nextState[agent]['location'], agent, goal_value, goal_display_label);
 
                 var th;
+                // if (goal_value > 0) {
                 th = setTimeout(celebrateGoal, this.painter.ACTION_ANIMATION_TIME);
+                // } else {
+                    th = setTimeout(function() {}, this.painter.ACTION_ANIMATION_TIME);
+                // }
                 $.subscribe('killtimers', (function (th) {
                         return function () {
                             clearTimeout(th)
@@ -486,9 +502,7 @@ responseHandlerGeneratorForTest = function (action_mapping, instruction_set) {
 
             if (this.mdp.inGoal(nextState[agent]['location'], agent)) {
 
-                // allow_response = false;
                 move_to_next_trial = true;
-                // trial_complete = true;
 
                 //get the value, identity and on-screen label of the goal
                 goal_value = this.mdp.getStateValue(nextState[agent]['location'], agent);
@@ -496,13 +510,15 @@ responseHandlerGeneratorForTest = function (action_mapping, instruction_set) {
                 goal_id = this.mdp.getGoalID(nextState[agent]['location'], agent);
                 this.total_points += goal_value;
 
+
                 // if agent is in goal state, celebrate.
                 var celebrateGoal = (function (painter, location, agent, goal_display_label) {
                     return function () {
+                        painter.showLoss(location, agent, goal_display_label);
 
-                        var text_display = 'Goal: <span style="font-weight: bold"><span style="font-size:150%">' +
-                            '<span style="color:' + painter.AGENT_COLORS['agent1'] +'">' +
-                            goal_display_label +'</span></span></span><br><span style="font-size:150%">' +
+                        var text_display = 'You Chose Goal: <span style="font-weight: bold"><span style="font-size:150%">' +
+                            '<span style="color:' + painter.AGENT_COLORS['agent1'] + '">' +
+                            goal_display_label + '</span></span></span><br><span style="font-size:150%">' +
                             '<span style="font-weight: bold"> </span></span><br> ' +
                             '<I><span style="color: #707070"><i>Press enter to continue</i></span></I>';
 
@@ -518,17 +534,6 @@ responseHandlerGeneratorForTest = function (action_mapping, instruction_set) {
                         }
                     })(th)
                 );
-
-            } else {
-                if (this.points > 0) {
-                    this.points--; // decrease points with each step taken if the agent isn't in the goal
-                }
-                var text_display = 'Which goal is the best?<span style="font-size:150%"></span><br>' +
-                    '<span style="font-size:150%"><span style="font-weight: bold"> </span></span><br> ' +
-                    '<span style="color: #707070"><span style="font-style: italic">Use the ' +
-                    instruction_set+ ' keys to move.';
-
-                $('#trial_text').html(text_display);
             }
         }
 

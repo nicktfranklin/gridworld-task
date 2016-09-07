@@ -129,6 +129,11 @@ strong {
     text-align : left;
     margin: 0 auto;
 }
+.left {
+    position: absolute;
+    left: 5%;
+
+}
 
 .right {
     position: absolute;

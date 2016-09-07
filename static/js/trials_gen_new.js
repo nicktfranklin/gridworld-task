@@ -123,7 +123,8 @@ while (context_queue.length > 0) {
         //initial text, display id, message id
         'Which goal is the best?<span style="font-size:150%"></span><br><span style="font-size:150%">' +
         '<span style="font-weight: bold"> </span></span><br><span style="color: #707070">' +
-        '<span style="font-style: italic"> Use the '+ contexts[ctx].instruction_set + ' keys to move.</span></span>',
+        '<span style="font-style: italic"> Use the <b>a</b>, <b>s</b>, <b>d</b>, <b>f</b>, and <b>j</b>, <b>k</b>, ' +
+        '<b>l</b>, <b>;</b> keys to move.</span></span>',
         '#task_display',
         '#trial_text'
     );

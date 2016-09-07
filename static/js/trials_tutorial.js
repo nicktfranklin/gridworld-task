@@ -350,5 +350,5 @@ var endDemo = new DemoTrial(
 );
 
 
-// var demo_trials = [demo0, demo1, demo2, demo3, demo5, demo6, demo7, demo8, demo9, endDemo];
-var demo_trials = [demo8, endDemo];
+var demo_trials = [demo0, demo1, demo2, demo3, demo5, demo6, demo7, demo8, demo9, endDemo];
+// var demo_trials = [demo8, endDemo];
