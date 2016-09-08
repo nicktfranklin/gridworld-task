@@ -44,6 +44,7 @@ function shuffle_keys() {
     return label_key
 }
 var goal_display_label_key = shuffle_keys();
+console.log(goal_display_label_key);
 
 // var n_ctx = contexts.length;
 var balance = [5, 3, 16, 8, 16];
@@ -90,7 +91,7 @@ function randomize_context_queue(context_balance, repeat_prob) {
 
     return context_queue
 }
-var context_queue = randomize_context_queue(balance, 0.15);
+var context_queue = randomize_context_queue(balance, 0.20);
 
 // Note! context order is a queue!!
 // for (ii=0; ii<4; ii++) {

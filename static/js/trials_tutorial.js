@@ -279,7 +279,7 @@ var generate_demo8 = function(response_handler) {
 		response_handler
 		,
 		//initial text, display id, message id
-		'You will see multiple goals in a maze, each labeled with a letter.<br> Here, the "<b>Y</b>" square is the goal. <br>' +
+		'Now there are colored squares, each labeled with a letter.<br> The "<b>Y</b>" square is the goal. <br>' +
 			'<span style="color: #707070">Use the ' + instruction_set_b + ' keys to move.</span>',
 		'#task_display',
 		'#trial_text'

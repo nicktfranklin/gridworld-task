@@ -84,9 +84,9 @@ while (context_queue.length > 0) {
     }
 
     var goal_values = {
-        'A': 6.67, // "A" is rewarded in 4 of 6 training contexts
-        'B': 1.67, // "B" is rewarded in 1 of 6 training contexts
-        'C': 1.67  // "C" is rewarded in 1 of 6 training contexts
+        'A': 6.0, // "A" is rewarded in 3 of 5 training contexts
+        'B': 2.0, // "B" is rewarded in 1 of 5 training contexts
+        'C': 2.0  // "C" is rewarded in 1 of 5 training contexts
     };
 
     // construct the goals
