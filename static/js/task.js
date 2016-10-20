@@ -58,7 +58,7 @@ var instructionsExperiment_repeat = [
 *
 ********************/
 var replaceBody = function(error_message) {
-    $('html').html(error_message)
+    $('body').html(error_message)
 
 };
 
@@ -368,7 +368,7 @@ var DemographicsQuestionnaire = function() {
             psiTurk.recordUnstructuredData(this.id, this.value);
         });
         $('select').each( function(i, val) {
-            psiTurk.recordUnstructuredData(this.id, this.value);        
+            psiTurk.recordUnstructuredData(this.id, this.value);
         });
 
         psiTurk.recordUnstructuredData('Browser', navigator.userAgent);
@@ -376,18 +376,10 @@ var DemographicsQuestionnaire = function() {
         psiTurk.recordUnstructuredData('Completion Time', elapsedTime)
     };
 
+
     prompt_resubmit = function() {
         replaceBody(error_message);
         $("#resubmit").click(resubmit);
-    };
-
-    var check_responses = function() {
-        $('textarea').each( function(i, val) {
-            console.log(this.id, this.value)
-        });
-        $('select').each( function(i, val) {
-            console.log(this.id, this.value)
-        });
     };
 
     resubmit = function() {
@@ -396,8 +388,8 @@ var DemographicsQuestionnaire = function() {
         
         psiTurk.saveData({
             success: function() {
-                clearInterval(reprompt); 
-                psiTurk.computeBonus('compute_bonus', function(){finish()}); 
+                clearInterval(reprompt);
+                current_view = TaskQuestionnaire();
             }, 
             error: prompt_resubmit
         });
@@ -408,7 +400,6 @@ var DemographicsQuestionnaire = function() {
     psiTurk.recordTrialData({'phase':'questionnaire-demographics', 'status':'begin'});
     
     $("#next").click(function () {
-        check_responses();
         record_responses();
         psiTurk.saveData({
             success: function(){
@@ -453,7 +444,7 @@ var TaskQuestionnaire = function() {
         psiTurk.saveData({
             success: function() {
                 clearInterval(reprompt);
-                psiTurk.computeBonus('compute_bonus', function(){finish()});
+                current_view = psiTurk.completeHIT();
             },
             error: prompt_resubmit
         });
