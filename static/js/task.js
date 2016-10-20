@@ -22,11 +22,7 @@ var pages = [
     "questionnaires/questionnaire-task.html",
     "questionnaires/questionnaire-demographics.html",
     "questionnaires/questionnaire-instructions.html",
-    "feedback/feedback-experiment.html",
-    "instructions/instruct-generalization1.html",
-    "instructions/instruct-generalization2.html",
-    "instructions/instruct-generalization3.html",
-    "feedback/feedback-generalization.html"
+    "feedback/feedback-experiment.html"
 ];
 
 psiTurk.preloadPages(pages);
@@ -49,11 +45,6 @@ var instructionsExperiment_repeat = [
     "instructions/instruct-experiment3.html"
 ];
 
-var instructionsGeneralization = [
-    "instructions/instruct-generalization1.html",
-    "instructions/instruct-generalization2.html",
-    "instructions/instruct-generalization3.html"
-];
 
 
 
@@ -66,6 +57,10 @@ var instructionsGeneralization = [
 * insert them into the document.
 *
 ********************/
+var replaceBody = function(error_message) {
+    $('html').html(error_message)
+
+};
 
 /********************
 * Tutorial      *
@@ -259,115 +254,11 @@ var Experiment = function() {
 
         psiTurk.saveData();
         current_view = new RewardFeedback_experiment();
-        // current_view = new DemographicsQuestionnaire();
     };
 
     init();
 };
 
-/// Test phase
-var generalization_points = 0;
-var Generalization = function() {
-
-   trial_number = -1;
-   // move_to_next_trial = false;
-   // trial_complete = false;
-
-   //trials variable is declared in trials_experimental.js
-
-   var curBlock;
-
-   var init = function() {
-       console.log("");
-       console.log("Test Phase init called");
-
-       psiTurk.showPage('stage.html');
-
-       for (var ii=0; ii < test_trials.length; ii++) {
-           test_trials[ii].task_display = document.getElementById('task_display');
-           test_trials[ii].text_display = $('#trial_text');
-       }
-
-       if (typeof curBlock !== 'undefined') {
-           setTimeout(curBlock.end(), 10);
-       }
-
-       curBlock = test_trials.shift();
-       setTimeout(curBlock.start(), 10);
-       curBlock.total_points = 0;
-       times_seen_context[curBlock.context] = 1;
-
-       // allow_response = true;
-       move_to_next_trial = false;
-
-       setTimeout(function() {
-           $(document).bind('keydown.continue', next_test_trial);
-       }, 10)
-   };
-
-
-   var next_test_trial = function(event) {
-       console.log("next event called (test)");
-
-       if (event.which==13) {
-           if (test_trials.length===0) {
-               finish()
-           }
-           else {
-               if (move_to_next_trial) {
-                   //this.stateCheck = true;
-                   $(document).unbind('keydown.continue');
-                   $.publish('killtimers');
-
-                   n_responses = 0;
-
-                   if (typeof curBlock !== 'undefined') {
-                       setTimeout(curBlock.end(), 10);
-                   }
-
-                   generalization_points = curBlock.total_points; // get the total points from the end of the trial
-
-                   curBlock = test_trials.shift();
-
-                   // how many times has this context been seen?
-                   if (curBlock.context in times_seen_context) {
-                       times_seen_context[curBlock.context] ++;
-                   } else {
-                       times_seen_context[curBlock.context] = 1;
-                   }
-                   curBlock.times_seen_context = times_seen_context[curBlock.context];
-
-                   // Pass the total points collected to the current block for display
-                   curBlock.total_points = generalization_points;
-
-                   setTimeout(curBlock.start(), 10);
-
-                   // allow_response = true;
-                   move_to_next_trial = false;
-                   console.log('check continue');
-
-                   setTimeout(function() {
-                       $(document).bind('keydown.continue', next_test_trial);
-                   }, 10)
-               }
-           }
-       }
-   };
-
-   var finish = function() {
-       $("body").unbind("keydown.continue"); // Unbind keys
-       psiTurk.recordTrialData(
-           {
-               'Phase': 'Generalization Points Collected',
-               'Total Points': generalization_points
-           });
-
-       psiTurk.saveData();
-       current_view = RewardFeedback_total();
-   };
-
-   init();
-};
 
 /****************
 * Feedback Screens *
@@ -378,28 +269,9 @@ var RewardFeedback_experiment = function() {
 
 
     $("#next").click(function () {
-        psiTurk.doInstructions(
-            instructionsGeneralization,
-            function() {
-                // allow_response = true;
-                current_view = new Generalization(); // executes following instructions.
-            }
-        );
+        current_view = new DemographicsQuestionnaire();
+
     });
-
-
-};
-
-var RewardFeedback_total = function() {
-   var all_points = total_points + generalization_points;
-   psiTurk.showPage('feedback/feedback-generalization.html');
-   $('#generalization_points').html(generalization_points);
-   $('#points').html(all_points);
-
-
-   $("#next").click(function () {
-       current_view = new DemographicsQuestionnaire();
-   });
 
 
 };

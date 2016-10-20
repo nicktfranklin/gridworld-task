@@ -24,12 +24,16 @@ var response_handler_b = responseHandlerGenerator(action_mapping_b);
 var contexts = [
     {'ctx': 0, 'response_handler': response_handler_a, 'goal_id': 'A', 'color': list_colors.pop()},
     {'ctx': 1, 'response_handler': response_handler_a, 'goal_id': 'A', 'color': list_colors.pop()},
-    {'ctx': 2, 'response_handler': response_handler_a, 'goal_id': 'B', 'color': list_colors.pop()},
-    {'ctx': 3, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()},
-    {'ctx': 4, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()}
-    // {'ctx': 5, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()}
+    {'ctx': 2, 'response_handler': response_handler_a, 'goal_id': 'A', 'color': list_colors.pop()},
+    {'ctx': 3, 'response_handler': response_handler_b, 'goal_id': 'B', 'color': list_colors.pop()},
+    {'ctx': 4, 'response_handler': response_handler_b, 'goal_id': 'B', 'color': list_colors.pop()},
+    {'ctx': 5, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()},
+    {'ctx': 6, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()},
+    {'ctx': 7, 'response_handler': response_handler_a, 'goal_id': 'B', 'color': list_colors.pop()},
+    {'ctx': 8, 'response_handler': response_handler_a, 'goal_id': 'C', 'color': list_colors.pop()},
+    {'ctx': 9, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()}
 ];
-
+console.log(contexts);
 /* we want to control for the actual goal identity, so randomize what is acutally shown on the screen
  such that what we count as Goal "A" may actually be goal "C", etc.
  */
@@ -47,7 +51,8 @@ var goal_display_label_key = shuffle_keys();
 console.log(goal_display_label_key);
 
 // var n_ctx = contexts.length;
-var balance = [5, 3, 16, 8, 16];
+var balance = [12, 12, 12, 18, 18, 36];
+var test_balance = [8, 8, 4, 4];
 var trial_tile_size = 70;
 
 /* New! Randomization Algorithm */
@@ -91,12 +96,23 @@ function randomize_context_queue(context_balance, repeat_prob) {
 
     return context_queue
 }
-var context_queue = randomize_context_queue(balance, 0.20);
+var context_queue = randomize_context_queue(balance, 0.15);
 
+// add the test contexts (fully randomized order)
+var bag_of_test_contexts = [];
+for (var ii=0; ii<test_balance.length; ii++) {
+    for (var jj=0; jj<test_balance[ii]; jj++) {
+        bag_of_test_contexts.push(ii + balance.length)
+    }
+}
+
+bag_of_test_contexts = _.shuffle(bag_of_test_contexts);
 // Note! context order is a queue!!
-// for (ii=0; ii<4; ii++) {
-//     context_queue.push(5);
-// }
+for (ii=0; ii<bag_of_test_contexts.length; ii++) {
+    context_queue.push(bag_of_test_contexts[ii]);
+}
+
+
 console.log('Context Order:');
 console.log(context_queue);
 // count the contexts in the queue
