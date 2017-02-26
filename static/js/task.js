@@ -444,6 +444,7 @@ var TaskQuestionnaire = function() {
         psiTurk.saveData({
             success: function() {
                 clearInterval(reprompt);
+                psiTurk.computeBonus('./compute_bonus', function () {});
                 current_view = psiTurk.completeHIT();
             },
             error: prompt_resubmit
@@ -459,6 +460,7 @@ var TaskQuestionnaire = function() {
         record_responses();
         psiTurk.saveData({
             success: function(){
+                psiTurk.computeBonus('./compute_bonus', function () {});
                 psiTurk.completeHIT(); // when finished saving compute bonus, the quit
             },
             error: prompt_resubmit});
@@ -481,6 +483,6 @@ $(window).load( function(){
         // instructionsGeneralization,
         // function() {current_view = new Generalization()}
         // function () { current_view = new InstructionsQuestionnaire() };
-        // function() { current_view = new Tutorial(); }
+        // function() { current_view = new Experiment(); }
     );
 });
