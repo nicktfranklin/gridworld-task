@@ -28,7 +28,7 @@ var cardinal_order_b = ['up','left','right','down'];
 var cardinal_order_c = ['up', 'right', 'left', 'down'];
 var cardinal_order_d = ['down', 'up', 'left', 'right'];
 
-var cardinal_orders = _.shuffle([[cardinal_order_a, cardinal_order_d], [cardinal_order_b, cardinal_order_b]]);
+var cardinal_orders = _.shuffle([[cardinal_order_a, cardinal_order_d], [cardinal_order_b, cardinal_order_c]]);
 
 // create a left hand and right hand set (that are labeled) for the test trials
 var action_mapping_lh = {};
