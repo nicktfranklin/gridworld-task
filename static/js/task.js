@@ -286,6 +286,7 @@ var reprompt;
 var record_responses;
 var prompt_resubmit;
 var resubmit;
+var complete_hit;
 var InstructionsQuestionnaire = function() {
 
     var check_responses = function() {
@@ -444,7 +445,7 @@ var TaskQuestionnaire = function() {
         psiTurk.saveData({
             success: function() {
                 clearInterval(reprompt);
-                psiTurk.computeBonus('./compute_bonus', function () {});
+                psiTurk.computeBonus('./compute_bonus', complete_hit);
                 current_view = psiTurk.completeHIT();
             },
             error: prompt_resubmit
@@ -460,11 +461,16 @@ var TaskQuestionnaire = function() {
         record_responses();
         psiTurk.saveData({
             success: function(){
-                psiTurk.computeBonus('./compute_bonus', function () {});
-                psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+                psiTurk.computeBonus('./compute_bonus', complete_hit);
+                // psiTurk.completeHIT(); // when finished saving compute bonus, the quit
             },
             error: prompt_resubmit});
+        psiTurk.completeHIT();
     });
+
+    complete_hit = function() {
+        psiTurk.completeHIT();
+    }
 
 
 };

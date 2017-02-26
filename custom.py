@@ -91,7 +91,7 @@ def compute_bonus():
             if (trial['Phase']=='Experiment') | (trial['Phase'] == 'Generalization'):
                 if trial['Reward'] > 0:
                     #task pays up to $1.00 in bonus and there are 132 trials
-                    bonus += 1.00 / 132
+                    bonus += 1.00 / 132.0
 
         user.bonus = bonus
         db_session.add(user)
