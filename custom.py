@@ -82,17 +82,17 @@ def compute_bonus():
 
     try:
         # lookup user in database
-        user = Participant.query. \
-            filter(Participant.uniqueid == uniqueId). \
-            one()
-        user_data = loads(user.datastring)  # load datastring from JSON
+        user = Participant.query.filter(Participant.uniqueid == uniqueId).one()
+        user_data = loads(user.datastring) # load datastring from JSON
         bonus = 0
 
-        for record in user_data['data']:  # for line in data file
+        for record in user_data['data']: # for line in data file
             trial = record['trialdata']
-            if trial['phase'] == 'TEST':
-                if trial['hit'] == True:
-                    bonus += 0.02
+            if (trial['Phase']=='Experiment') | (trial['Phase'] == 'Generalization'):
+                if trial['Reward'] > 0:
+                    #task pays up to $1.00 in bonus and there are 132 trials
+                    bonus += 1.00 / 132
+
         user.bonus = bonus
         db_session.add(user)
         db_session.commit()
