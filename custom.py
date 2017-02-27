@@ -29,74 +29,74 @@ custom_code = Blueprint('custom_code', __name__, template_folder='templates', st
 #  add them here
 ###########################################################
 
-# ----------------------------------------------
+#----------------------------------------------
 # example custom route
-# ----------------------------------------------
+#----------------------------------------------
 @custom_code.route('/my_custom_view')
 def my_custom_view():
-    current_app.logger.info("Reached /my_custom_view")  # Print message to server.log for debugging
-    try:
-        return render_template('custom.html')
-    except TemplateNotFound:
-        abort(404)
+	current_app.logger.info("Reached /my_custom_view")  # Print message to server.log for debugging
+	try:
+		return render_template('custom.html')
+	except TemplateNotFound:
+		abort(404)
 
-
-# ----------------------------------------------
+#----------------------------------------------
 # example using HTTP authentication
-# ----------------------------------------------
+#----------------------------------------------
 @custom_code.route('/my_password_protected_route')
 @myauth.requires_auth
 def my_password_protected_route():
-    try:
-        return render_template('custom.html')
-    except TemplateNotFound:
-        abort(404)
+	try:
+		return render_template('custom.html')
+	except TemplateNotFound:
+		abort(404)
 
-
-# ----------------------------------------------
+#----------------------------------------------
 # example accessing data
-# ----------------------------------------------
+#----------------------------------------------
 @custom_code.route('/view_data')
 @myauth.requires_auth
 def list_my_data():
-    users = Participant.query.all()
-    try:
-        return render_template('list.html', participants=users)
-    except TemplateNotFound:
-        abort(404)
+        users = Participant.query.all()
+	try:
+		return render_template('list.html', participants=users)
+	except TemplateNotFound:
+		abort(404)
 
-
-# ----------------------------------------------
+#----------------------------------------------
 # example computing bonus
-# ----------------------------------------------
+#----------------------------------------------
 
 @custom_code.route('/compute_bonus', methods=['GET'])
 def compute_bonus():
     # check that user provided the correct keys
-    # errors will not be that graceful here if being
-    # accessed by the Javascript client
+    # errors will not be that gracefull here if being
+    # accessed by the Javascrip client
     if not request.args.has_key('uniqueId'):
-        raise ExperimentError(
-            'improper_inputs')  # ii don't like returning HTML to JSON requests...  maybe should change this
+        raise ExperimentError('improper_inputs')  # i don't like returning HTML to JSON requests...  maybe should change this
     uniqueId = request.args['uniqueId']
 
     try:
         # lookup user in database
-        user = Participant.query.filter(Participant.uniqueid == uniqueId).one()
+        user = Participant.query.\
+               filter(Participant.uniqueid == uniqueId).\
+               one()
         user_data = loads(user.datastring) # load datastring from JSON
         bonus = 0
 
         for record in user_data['data']: # for line in data file
             trial = record['trialdata']
-            if (trial['Phase']=='Experiment') | (trial['Phase'] == 'Generalization'):
+            if trial[u'phase'] == u'Experiment':
                 if trial['Reward'] > 0:
                     #task pays up to $1.00 in bonus and there are 132 trials
                     bonus += 1.00 / 132.0
 
-        user.bonus = bonus
+        user.bonus = round(bonus, 2)
         db_session.add(user)
         db_session.commit()
         resp = {"bonusComputed": "success"}
         return jsonify(**resp)
     except:
         abort(404)  # again, bad to display HTML, but...
+
+

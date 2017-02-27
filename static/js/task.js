@@ -248,7 +248,7 @@ var Experiment = function() {
         $("body").unbind(); // Unbind keys
         psiTurk.recordTrialData(
             {
-                'Phase': 'Points Collected',
+                'phase': 'Points Collected',
                 'Total Points': total_points
             });
 
@@ -286,7 +286,8 @@ var reprompt;
 var record_responses;
 var prompt_resubmit;
 var resubmit;
-var complete_hit;
+var savedata;
+var finish;
 var InstructionsQuestionnaire = function() {
 
     var check_responses = function() {
@@ -441,12 +442,9 @@ var TaskQuestionnaire = function() {
     resubmit = function() {
         replaceBody("<h1>Trying to resubmit...</h1>");
         reprompt = setTimeout(prompt_resubmit, 10000);
-
         psiTurk.saveData({
-            success: function() {
-                clearInterval(reprompt);
-                psiTurk.computeBonus('./compute_bonus', complete_hit);
-                current_view = psiTurk.completeHIT();
+            success: function(){
+                psiTurk.computeBonus('./compute_bonus', function(){finish()})
             },
             error: prompt_resubmit
         });
@@ -461,15 +459,23 @@ var TaskQuestionnaire = function() {
         record_responses();
         psiTurk.saveData({
             success: function(){
-                psiTurk.computeBonus('./compute_bonus', complete_hit);
-                // psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+                psiTurk.computeBonus('./compute_bonus', function(){finish()})
             },
-            error: prompt_resubmit});
-        psiTurk.completeHIT();
+            error: prompt_resubmit
+        });
     });
 
-    complete_hit = function() {
+    finish = function() {
         psiTurk.completeHIT();
+    };
+
+    savedata = function() {
+        psiturk.saveData({
+            success: function(){
+                current_view = psiturk.completeHIT();
+            },
+            error: prompt_resubmit
+        })
     }
 
 

@@ -93,7 +93,7 @@ demo_responseHandlerGenerator = function (action_mapping) {
         // Record in psiturk
         psiTurk.recordTrialData(
             {
-                'Phase': 'Demo Trial',
+                'phase': 'Demo Trial',
                 'key-press': event.which,
                 'action': response,
                 'End Location': this.state['agent1'].location,
@@ -184,7 +184,7 @@ var demo_responseHandler_generator_noReachableAction = function(action_mapping) 
         // Record in psiturk (work in progress)
         psiTurk.recordTrialData(
             {
-                'Phase': 'Demo Trial',
+                'phase': 'Demo Trial',
                 'key-press': event.which,
                 'action': response,
                 'End Location': this.state['agent1'].location,
@@ -268,7 +268,7 @@ var demo_responseHandler_generator_endDemo= function(action_mapping) {
         // Record in psiturk (work in progress)
         psiTurk.recordTrialData(
             {
-                'Phase': 'Demo Trial',
+                'phase': 'Demo Trial',
                 'key-press': event.which,
                 'action': response,
                 'End Location': this.state['agent1'].location,
@@ -419,7 +419,7 @@ responseHandlerGenerator = function (action_mapping) {
                 'Goal Locations': this.mdp.getGoalLocations(agent),
                 'Trial Number': trial_number,
                 'Times Seen Context': this.times_seen_context,
-                'Phase': 'Experiment',
+                'phase': 'Experiment',
                 'rt': rt,
                 'n actions taken': this.actions_taken,
                 // these are general trial information
@@ -555,7 +555,7 @@ responseHandlerGeneratorForTest = function (action_mapping, instruction_set) {
                 'Goal Locations': this.mdp.getGoalLocations(agent),
                 'Trial Number': trial_number,
                 'Times Seen Context': this.times_seen_context,
-                'Phase': 'Generalization',
+                'phase': 'Generalization',
                 'rt': rt,
                 'n actions taken': this.actions_taken,
                 // these are general trial information
