@@ -51,7 +51,6 @@ function shuffle_keys() {
     return label_key
 }
 var goal_display_label_key = shuffle_keys();
-console.log(goal_display_label_key);
 
 // var n_ctx = contexts.length;
 var balance = [12, 12, 12, 18, 18, 36];

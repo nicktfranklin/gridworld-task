@@ -45,7 +45,8 @@ var instructionsExperiment_repeat = [
     "instructions/instruct-experiment3.html"
 ];
 
-
+// save some basic information about the task:
+psiTurk.recordUnstructuredData('Displayed Goal Labels', goal_display_label_key);
 
 
 /********************
@@ -442,8 +443,10 @@ var TaskQuestionnaire = function() {
     resubmit = function() {
         replaceBody("<h1>Trying to resubmit...</h1>");
         reprompt = setTimeout(prompt_resubmit, 10000);
+
         psiTurk.saveData({
             success: function(){
+                clearInterval(reprompt);
                 psiTurk.computeBonus('./compute_bonus', function(){finish()})
             },
             error: prompt_resubmit

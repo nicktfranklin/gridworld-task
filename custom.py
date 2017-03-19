@@ -1,4 +1,4 @@
-# this file imports custom routes into the experiment server
+11# this file imports custom routes into the experiment server
 
 from flask import Blueprint, render_template, request, jsonify, Response, abort, current_app
 from jinja2 import TemplateNotFound
@@ -98,5 +98,3 @@ def compute_bonus():
         return jsonify(**resp)
     except:
         abort(404)  # again, bad to display HTML, but...
-
-

@@ -402,26 +402,37 @@ responseHandlerGenerator = function (action_mapping) {
         }
 
         // Record in psiturk (work in progress)
+        // run test conditions to reduce size of information in the data:
+        var walls_to_save;
+        var mapping_to_save;
+        if (this.actions_taken == 1) {
+            walls_to_save = this.gridworld.walls;
+            mapping_to_save = action_mapping;
+        } else {
+            walls_to_save = [];
+            mapping_to_save = [];
+        }
+
         psiTurk.recordTrialData(
             {
                 'Context': this.context,
                 'Start Location': startLocation,
                 'Key-press': event.which,
                 'End Location': this.state['agent1'].location,
-                'Action Map': action_mapping,
-                'Walls': this.gridworld.walls,
+                'Action Map': mapping_to_save,
+                'Walls': walls_to_save,
                 'Action': response, // this is the cardinal direction taken
                 'Reward': goal_value,
                 'In Goal': this.mdp.inGoal(nextState[agent]['location'], agent),
                 'Chosen Goal': goal_id,
-                'Displayed Goal Label': goal_display_label,
+                // 'Displayed Goal Label': goal_display_label,
                 'Steps Taken': this.actions_taken,
                 'Goal Locations': this.mdp.getGoalLocations(agent),
                 'Trial Number': trial_number,
                 'Times Seen Context': this.times_seen_context,
                 'phase': 'Experiment',
                 'rt': rt,
-                'n actions taken': this.actions_taken,
+                // 'n actions taken': this.actions_taken,
                 // these are general trial information
                 'agent_color': this.painter.AGENT_COLORS['agent1']
             });
@@ -453,141 +464,7 @@ responseHandlerGenerator = function (action_mapping) {
                 }
             })(th)
         );
-
         trial_on = new Date().getTime();
-
-
     };
-
 };
 
-
-var responseHandlerGeneratorForTest;
-responseHandlerGeneratorForTest = function (action_mapping, instruction_set) {
-    /**
-     * Makes the response handler for the experimental trials
-     * @param action_mapping
-     * @returns {Function}
-     */
-
-    return function (event) {
-
-        // Use the Action map to translate the action correctly.
-        var response = action_mapping[event.which];
-        if (response === undefined) {
-            response = 'wait';
-        }
-
-        var rt = new Date().getTime() - trial_on; // record the reaction time.
-
-        ////choose random actions for other agents --- don't need this.
-        var agentActions = {};
-        agentActions['agent1'] = response;
-
-        var nextState = this.mdp.getTransition(this.state, agentActions);
-        var startLocation = this.state['agent1'].location;
-
-        this.painter.drawTransition(this.state, agentActions, nextState, this.mdp);
-        this.state = nextState;
-        this.actions_taken++;
-        var goal_value = 0;
-        var goal_id = 'None'; // this is the goal's subject-independent label (has the same statistics across subjects)
-        var goal_display_label = 'None'; // this is the goal's label on the screen (this is randomized)
-
-        $(document).unbind('keydown.gridworld');
-
-        /* Determine the Rewards */
-        //var reset_key_time = this.painter.ACTION_ANIMATION_TIME;
-        for (var agent in this.state) {
-
-            if (this.mdp.inGoal(nextState[agent]['location'], agent)) {
-
-                move_to_next_trial = true;
-
-                //get the value, identity and on-screen label of the goal
-                goal_value = this.mdp.getStateValue(nextState[agent]['location'], agent);
-                goal_display_label = this.mdp.getGoalDisplayLabel(nextState[agent]['location'], agent);
-                goal_id = this.mdp.getGoalID(nextState[agent]['location'], agent);
-                this.total_points += goal_value;
-
-
-                // if agent is in goal state, celebrate.
-                var celebrateGoal = (function (painter, location, agent, goal_display_label) {
-                    return function () {
-                        painter.showLoss(location, agent, goal_display_label);
-
-                        var text_display = 'You Chose Goal: <span style="font-weight: bold"><span style="font-size:150%">' +
-                            '<span style="color:' + painter.AGENT_COLORS['agent1'] + '">' +
-                            goal_display_label + '</span></span></span><br><span style="font-size:150%">' +
-                            '<span style="font-weight: bold"> </span></span><br> ' +
-                            '<I><span style="color: #707070"><i>Press enter to continue</i></span></I>';
-
-                        $('#trial_text').html(text_display);
-                    }
-                })(this.painter, nextState[agent]['location'], agent, goal_display_label);
-
-                var th;
-                th = setTimeout(celebrateGoal, this.painter.ACTION_ANIMATION_TIME);
-                $.subscribe('killtimers', (function (th) {
-                        return function () {
-                            clearTimeout(th)
-                        }
-                    })(th)
-                );
-            }
-        }
-
-        // Record in psiturk (work in progress)
-        psiTurk.recordTrialData(
-            {
-                'Context': this.context,
-                'Start Location': startLocation,
-                'Key-press': event.which,
-                'End Location': this.state['agent1'].location,
-                'Action Map': action_mapping,
-                'Walls': this.gridworld.walls,
-                'Action': response, // this is the cardinal direction taken
-                'Reward': goal_value,
-                'In Goal': this.mdp.inGoal(nextState[agent]['location'], agent),
-                'Chosen Goal': goal_id,
-                'Displayed Goal Label': goal_display_label,
-                'Steps Taken': this.actions_taken,
-                'Goal Locations': this.mdp.getGoalLocations(agent),
-                'Trial Number': trial_number,
-                'Times Seen Context': this.times_seen_context,
-                'phase': 'Generalization',
-                'rt': rt,
-                'n actions taken': this.actions_taken,
-                // these are general trial information
-                'agent_color': this.painter.AGENT_COLORS['agent1']
-            });
-
-
-        //note: you need a closure in order to properly reset
-        if (this.mdp.inGoal(nextState[agent]['location'], agent)) {
-            reset_key_handler = (function () {
-                return function () {
-                    $(document).bind('keydown.gridworld', function (event) {});
-                }
-            })();
-        } else {
-            var reset_key_handler = (function (key_handler) {
-                return function () {
-                    $(document).bind('keydown.gridworld', key_handler);
-                }
-            })(this.key_handler);
-        }
-        //var th;
-        th = setTimeout(reset_key_handler, this.painter.ACTION_ANIMATION_TIME + wait_before_actions_time);
-        $.subscribe('killtimers', (function (th) {
-                return function () {
-                    clearTimeout(th)
-                }
-            })(th)
-        );
-
-        trial_on = new Date().getTime();
-
-    };
-
-};
