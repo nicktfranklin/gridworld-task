@@ -18,9 +18,9 @@ table_name = turkdemo
 [Server Parameters]
 host = 0.0.0.0
 port = 22362
-cutoff_time = 30
+cutoff_time = 90
 logfile = server.log
-loglevel = 2
+loglevel = 3
 debug = true
 login_username = examplename
 login_pw = examplepassword
