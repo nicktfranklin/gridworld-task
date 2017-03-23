@@ -425,7 +425,7 @@ responseHandlerGenerator = function (action_mapping) {
                 'Reward': goal_value,
                 'In Goal': this.mdp.inGoal(nextState[agent]['location'], agent),
                 'Chosen Goal': goal_id,
-                // 'Displayed Goal Label': goal_display_label,
+                'Displayed Goal Label': goal_display_label,
                 'Steps Taken': this.actions_taken,
                 'Goal Locations': this.mdp.getGoalLocations(agent),
                 'Trial Number': trial_number,

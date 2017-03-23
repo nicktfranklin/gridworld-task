@@ -6,8 +6,6 @@
 //
 var response_handler_a = responseHandlerGenerator(action_mapping_a);
 var response_handler_b = responseHandlerGenerator(action_mapping_b);
-var response_handler_c = responseHandlerGenerator(action_mapping_c);
-var response_handler_d = responseHandlerGenerator(action_mapping_d);
 
 
 /******************
@@ -31,10 +29,10 @@ var contexts = [
     {'ctx': 3, 'response_handler': response_handler_b, 'goal_id': 'B', 'color': list_colors.pop()},
     {'ctx': 4, 'response_handler': response_handler_b, 'goal_id': 'B', 'color': list_colors.pop()},
     {'ctx': 5, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()},
-    {'ctx': 6, 'response_handler': response_handler_c, 'goal_id': 'A', 'color': list_colors.pop()},
-    {'ctx': 7, 'response_handler': response_handler_d, 'goal_id': 'B', 'color': list_colors.pop()},
-    {'ctx': 8, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()},
-    {'ctx': 9, 'response_handler': response_handler_a, 'goal_id': 'C', 'color': list_colors.pop()}
+    {'ctx': 6, 'response_handler': response_handler_b, 'goal_id': 'A', 'color': list_colors.pop()},
+    {'ctx': 7, 'response_handler': response_handler_a, 'goal_id': 'B', 'color': list_colors.pop()},
+    {'ctx': 8, 'response_handler': response_handler_a, 'goal_id': 'C', 'color': list_colors.pop()},
+    {'ctx': 9, 'response_handler': response_handler_b, 'goal_id': 'C', 'color': list_colors.pop()}
 ];
 console.log(contexts);
 /* we want to control for the actual goal identity, so randomize what is acutally shown on the screen

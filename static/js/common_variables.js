@@ -25,22 +25,16 @@ if (navigator.userAgent.indexOf('Firefox') != -1) {
 
 var cardinal_order_a = ['left','up','down','right'];
 var cardinal_order_b = ['up','left','right','down'];
-var cardinal_order_c = ['up', 'right', 'left', 'down'];
-var cardinal_order_d = ['down', 'up', 'left', 'right'];
 
-var cardinal_orders = _.shuffle([[cardinal_order_a, cardinal_order_d], [cardinal_order_b, cardinal_order_c]]);
+var cardinal_orders = _.shuffle([cardinal_order_a, cardinal_order_b]);
 
 // create a left hand and right hand set (that are labeled) for the test trials
 var action_mapping_lh = {};
 var action_mapping_rh = {};
-var action_mapping_lh2 = {};
-var action_mapping_rh2 = {};
 
 for (var ii=0; ii<4; ii++) {
-    action_mapping_lh[left_hand_keys[ii]] = cardinal_orders[1][0][ii];
-    action_mapping_rh[right_hand_keys[ii]] = cardinal_orders[0][0][ii];
-    action_mapping_lh2[left_hand_keys[ii]] = cardinal_orders[1][1][ii];
-    action_mapping_rh2[left_hand_keys[ii]] = cardinal_orders[0][1][ii]
+    action_mapping_lh[left_hand_keys[ii]] = cardinal_orders[1][ii];
+    action_mapping_rh[right_hand_keys[ii]] = cardinal_orders[0][ii];
 
 }
 
@@ -58,8 +52,6 @@ var instruction_set_rh_red = '<b><span style="color: #FF0000">j</span></b>, ' +
 // either right hand or left hand.
 var action_mapping_a;
 var action_mapping_b;
-var action_mapping_c;
-var action_mapping_d;
 var instruction_set_a;
 var instruction_set_b;
 var instruction_set_b_red;
@@ -67,16 +59,12 @@ var instruction_set_b_red;
 if (Math.random() > .5) {
 	action_mapping_a = action_mapping_lh;
 	action_mapping_b = action_mapping_rh;
-    action_mapping_c = action_mapping_rh2;
-    action_mapping_d = action_mapping_lh2;
     instruction_set_a = instruction_set_lh;
     instruction_set_b = instruction_set_rh;
     instruction_set_b_red = instruction_set_rh_red;
 } else {
 	action_mapping_a = action_mapping_rh;
 	action_mapping_b = action_mapping_lh;
-    action_mapping_c = action_mapping_lh2;
-    action_mapping_d = action_mapping_rh2;
     instruction_set_a = instruction_set_rh;
     instruction_set_b = instruction_set_lh;
     instruction_set_b_red = instruction_set_lh_red;
